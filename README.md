@@ -35,7 +35,7 @@ An intelligent, zero-install web application that connects directly to your Andr
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/meowdoku.git
+git clone https://github.com/hrafsa/meowdoku-solver.git
 cd meowdoku
 
 # Install dependencies

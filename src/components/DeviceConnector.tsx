@@ -73,7 +73,7 @@ export const DeviceConnector: React.FC<DeviceConnectorProps> = ({
         {/* GitHub Repository Link on Far Right */}
         <div className="flex items-center gap-2">
           <a
-            href="https://github.com"
+            href="https://github.com/hrafsa/meowdoku-solver"
             target="_blank"
             rel="noopener noreferrer"
             className="w-9 h-9 rounded-xl bg-purple-300 hover:bg-purple-400 text-slate-900 brutal-btn flex items-center justify-center shrink-0"
