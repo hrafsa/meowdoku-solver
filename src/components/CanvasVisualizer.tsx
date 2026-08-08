@@ -42,15 +42,28 @@ export const CanvasVisualizer: React.FC<CanvasVisualizerProps> = ({
       if (
         showGrid &&
         detection &&
-        detection.screenState === 'GAME_BOARD' &&
+        detection.N > 0 &&
         detection.colCenters.length > 0
       ) {
         const { N, colCenters, rowCenters, scaleX, scaleY } = detection;
 
-        const cellW = (colCenters[1] - colCenters[0]) * scaleX;
-        const cellH = (rowCenters[1] - rowCenters[0]) * scaleY;
+        const cellW = N > 1 ? (colCenters[1] - colCenters[0]) * scaleX : 0;
+        const cellH = N > 1 ? (rowCenters[1] - rowCenters[0]) * scaleY : 0;
 
-        // 1. Draw grid overlay boxes
+        // 1. Tint detected regions so bad segmentation is immediately visible.
+        if (showRegions) {
+          const palette = ['#38BDF8', '#F472B6', '#34D399', '#FBBF24', '#A78BFA', '#FB7185', '#2DD4BF', '#F97316', '#60A5FA', '#A3E635'];
+          detection.regions.forEach((region, regionIndex) => {
+            ctx.fillStyle = `${palette[regionIndex % palette.length]}55`;
+            region.forEach(cell => {
+              const cx = colCenters[cell.c] * scaleX;
+              const cy = rowCenters[cell.r] * scaleY;
+              ctx.fillRect(cx - cellW / 2, cy - cellH / 2, cellW, cellH);
+            });
+          });
+        }
+
+        // 2. Draw grid overlay boxes
         ctx.strokeStyle = '#0F172A';
         ctx.lineWidth = Math.max(3, Math.round(4 * scaleX));
 
@@ -71,7 +84,7 @@ export const CanvasVisualizer: React.FC<CanvasVisualizerProps> = ({
           }
         }
 
-        // 2. Draw Solved Cat Markers if available
+        // 3. Draw Solved Cat Markers if available
         if (solution && solution.length > 0) {
           solution.forEach((cat, idx) => {
             const cx = colCenters[cat.c] * scaleX;
@@ -179,9 +192,9 @@ export const CanvasVisualizer: React.FC<CanvasVisualizerProps> = ({
           </div>
 
           <div className="bg-purple-200 brutal-border p-2 rounded-xl text-center">
-            <span className="text-[10px] font-bold text-slate-700 block">Screen Scaling</span>
+            <span className="text-[10px] font-bold text-slate-700 block">Confidence</span>
             <span className="text-xs font-mono font-extrabold text-slate-900">
-              Universal Auto
+              {detection?.confidence !== undefined ? `${Math.round(detection.confidence * 100)}%` : 'Waiting'}
             </span>
           </div>
         </div>

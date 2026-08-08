@@ -9,8 +9,6 @@ import { AdbManager } from './lib/adbManager';
 import {
   processImageDataAuto,
   GridDetectionResult,
-  STD_WIDTH,
-  STD_HEIGHT,
 } from './lib/visionEngine';
 
 export function App() {
@@ -91,10 +89,10 @@ export function App() {
         const origW = img.width;
         const origH = img.height;
 
-        const stdCanvas = document.createElement('canvas');
-        stdCanvas.width = STD_WIDTH;
-        stdCanvas.height = STD_HEIGHT;
-        const ctx = stdCanvas.getContext('2d');
+        const nativeCanvas = document.createElement('canvas');
+        nativeCanvas.width = origW;
+        nativeCanvas.height = origH;
+        const ctx = nativeCanvas.getContext('2d', { willReadFrequently: true });
 
         if (!ctx) {
           addLog('Failed canvas context.', 'error');
@@ -102,10 +100,10 @@ export function App() {
           return;
         }
 
-        ctx.drawImage(img, 0, 0, STD_WIDTH, STD_HEIGHT);
-        const stdImageData = ctx.getImageData(0, 0, STD_WIDTH, STD_HEIGHT);
+        ctx.drawImage(img, 0, 0);
+        const nativeImageData = ctx.getImageData(0, 0, origW, origH);
 
-        const detResult = processImageDataAuto(stdImageData, origW, origH);
+        const detResult = processImageDataAuto(nativeImageData, origW, origH);
         setDetection(detResult);
 
         if (detResult.screenState === 'SCOREBOARD') {
@@ -113,9 +111,10 @@ export function App() {
         } else if (detResult.screenState === 'VICTORY_SCREEN') {
           addLog(`Detected Victory Screen ("Kelas Master")!`, 'info');
         } else if (detResult.solution && detResult.solution.length > 0) {
-          addLog(`Detected ${detResult.N}x${detResult.N} Grid (${detResult.regions.length} Regions). Solved!`, 'success');
+          addLog(`Detected ${detResult.N}x${detResult.N} Grid (${detResult.regions.length} Regions, ${Math.round((detResult.confidence || 0) * 100)}% confidence). Solved!`, 'success');
         } else {
-          addLog(`Detected ${detResult.N}x${detResult.N} Grid (${detResult.regions.length} Regions). No solution found.`, 'warn');
+          const detail = detResult.diagnostics?.message || 'No solution found.';
+          addLog(`Detection withheld: ${detail}`, 'warn');
         }
 
         resolve(detResult);
@@ -164,9 +163,11 @@ export function App() {
             await adb.tapBatch([{ x: tapX, y: tapY }], 1, 0.05);
             addLog('Clicked Next Level button!', 'success');
           } else if (detResult.solution && detResult.solution.length > 0) {
-            addLog(`Executing ${detResult.solution.length} cat taps...`, 'info');
+            const existing = new Set((detResult.prePlacedCats || []).map(cat => `${cat.r},${cat.c}`));
+            const tapTargets = detResult.solution.filter(cat => !existing.has(`${cat.r},${cat.c}`));
+            addLog(`Executing ${tapTargets.length} new cat taps (${existing.size} already placed)...`, 'info');
 
-            const pointsNative = detResult.solution.map(cat => ({
+            const pointsNative = tapTargets.map(cat => ({
               x: Math.round(detResult.colCenters[cat.c] * detResult.scaleX),
               y: Math.round(detResult.rowCenters[cat.r] * detResult.scaleY),
             }));
@@ -228,9 +229,11 @@ export function App() {
           await adb.tapBatch([{ x: tapX, y: tapY }], 1, 0.05);
           await new Promise(r => setTimeout(r, 3000));
         } else if (detResult.solution && detResult.solution.length > 0) {
-          addLog(`[Auto-Loop] Solved level! Executing ${detResult.solution.length} cat taps...`, 'info');
+          const existing = new Set((detResult.prePlacedCats || []).map(cat => `${cat.r},${cat.c}`));
+          const tapTargets = detResult.solution.filter(cat => !existing.has(`${cat.r},${cat.c}`));
+          addLog(`[Auto-Loop] Solved level! Executing ${tapTargets.length} new cat taps...`, 'info');
 
-          const pointsNative = detResult.solution.map(cat => ({
+          const pointsNative = tapTargets.map(cat => ({
             x: Math.round(detResult.colCenters[cat.c] * detResult.scaleX),
             y: Math.round(detResult.rowCenters[cat.r] * detResult.scaleY),
           }));
@@ -259,10 +262,7 @@ export function App() {
           addLog('[Auto-Loop] Waiting 3s for new level board to load...', 'info');
           await new Promise(r => setTimeout(r, 3000));
         } else {
-          const tapX = Math.round(origW * 0.5);
-          const tapY = Math.round(origH * 0.85);
-          addLog(`[Auto-Loop] Unknown screen or intro active. Tapping screen at X=${tapX}, Y=${tapY}...`, 'warn');
-          await adb.tapBatch([{ x: tapX, y: tapY }], 1, 0.05);
+          addLog('[Auto-Loop] Detection uncertain. Tap suppressed; retrying after a fresh screenshot.', 'warn');
           await new Promise(r => setTimeout(r, 2000));
         }
       } catch (err: any) {
