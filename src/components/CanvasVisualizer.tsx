@@ -145,19 +145,19 @@ export const CanvasVisualizer: React.FC<CanvasVisualizerProps> = ({
       </div>
 
       {/* Main Canvas Frame */}
-      <div className="flex-1 bg-white brutal-border rounded-xl p-3 flex items-center justify-center min-h-0 relative overflow-hidden mb-2">
+      <div className="flex-1 bg-white brutal-border rounded-xl p-2.5 sm:p-3 flex items-center justify-center min-h-[300px] sm:min-h-[380px] lg:min-h-0 relative overflow-hidden mb-2">
         {imageSrc ? (
           <canvas
             ref={canvasRef}
-            className="max-h-full w-auto object-contain block border-2 border-slate-900 rounded-lg shadow-md"
+            className="max-h-[60vh] lg:max-h-full max-w-full w-auto h-auto object-contain block border-2 border-slate-900 rounded-lg shadow-md"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-center p-6">
-            <div className="w-12 h-12 rounded-xl bg-amber-300 brutal-border flex items-center justify-center mb-2">
-              <Smartphone className="w-6 h-6 text-slate-900" />
+          <div className="flex flex-col items-center justify-center text-center p-4 sm:p-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-300 brutal-border flex items-center justify-center mb-2">
+              <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900" />
             </div>
             <h3 className="text-xs font-extrabold text-slate-900">No Screen Capture</h3>
-            <p className="text-[11px] text-slate-700 font-semibold mt-0.5">
+            <p className="text-[10px] sm:text-[11px] text-slate-700 font-semibold mt-0.5">
               Connect phone via USB or click Capture & Auto-Solve.
             </p>
           </div>
@@ -171,29 +171,29 @@ export const CanvasVisualizer: React.FC<CanvasVisualizerProps> = ({
           <span className="text-[11px] font-extrabold text-slate-900">Auto-Detected Board Status</span>
         </div>
 
-        <div className="grid grid-cols-4 gap-2.5">
-          <div className="bg-sky-200 brutal-border p-2 rounded-xl text-center">
-            <span className="text-[10px] font-bold text-slate-700 block">Grid Size</span>
-            <span className="text-xs font-mono font-extrabold text-slate-900">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+          <div className="bg-sky-200 brutal-border p-1.5 sm:p-2 rounded-xl text-center">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-700 block">Grid Size</span>
+            <span className="text-[11px] sm:text-xs font-mono font-extrabold text-slate-900">
               {detection && detection.N > 0 ? `${detection.N} x ${detection.N}` : 'Auto-Detect'}
             </span>
           </div>
 
-          <div className="bg-pink-200 brutal-border p-2 rounded-xl text-center">
-            <span className="text-[10px] font-bold text-slate-700 block">Color Regions</span>
-            <span className="text-xs font-mono font-extrabold text-slate-900">
+          <div className="bg-pink-200 brutal-border p-1.5 sm:p-2 rounded-xl text-center">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-700 block">Color Regions</span>
+            <span className="text-[11px] sm:text-xs font-mono font-extrabold text-slate-900">
               {detection && detection.regions.length > 0 ? `${detection.regions.length} Regions` : 'Auto-Clustered'}
             </span>
           </div>
 
-          <div className="bg-emerald-200 brutal-border p-2 rounded-xl text-center">
-            <span className="text-[10px] font-bold text-slate-700 block">Taps per Cat</span>
-            <span className="text-xs font-mono font-extrabold text-slate-900">2 Taps (Auto)</span>
+          <div className="bg-emerald-200 brutal-border p-1.5 sm:p-2 rounded-xl text-center">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-700 block">Taps per Cat</span>
+            <span className="text-[11px] sm:text-xs font-mono font-extrabold text-slate-900">2 Taps (Auto)</span>
           </div>
 
-          <div className="bg-purple-200 brutal-border p-2 rounded-xl text-center">
-            <span className="text-[10px] font-bold text-slate-700 block">Confidence</span>
-            <span className="text-xs font-mono font-extrabold text-slate-900">
+          <div className="bg-purple-200 brutal-border p-1.5 sm:p-2 rounded-xl text-center">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-700 block">Confidence</span>
+            <span className="text-[11px] sm:text-xs font-mono font-extrabold text-slate-900">
               {detection?.confidence !== undefined ? `${Math.round(detection.confidence * 100)}%` : 'Waiting'}
             </span>
           </div>

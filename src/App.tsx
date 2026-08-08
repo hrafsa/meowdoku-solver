@@ -287,7 +287,7 @@ export function App() {
   }, [isAutoLoop, isConnected, adb]);
 
   return (
-    <div className="h-screen bg-amber-50 flex flex-col font-sans overflow-hidden">
+    <div className="min-h-screen lg:h-screen bg-amber-50 flex flex-col font-sans overflow-y-auto lg:overflow-hidden">
       {/* Top Header Navbar */}
       <DeviceConnector
         isConnected={isConnected}
@@ -295,19 +295,19 @@ export function App() {
         isWebUsbSupported={AdbManager.isSupported()}
       />
 
-      {/* Main Wireframe Layout: Big Left Capture Box + 3 Stacked Right Boxes */}
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 pb-4 flex gap-4 min-h-0">
-        {/* Left Side: Big Screen Capture Box (with Board Status embedded inside) */}
-        <div className="flex-1 min-w-0 flex flex-col min-h-0">
+      {/* Main Responsive Layout */}
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-3 sm:px-4 pb-4 flex flex-col lg:flex-row gap-4 min-h-0">
+        {/* Left Side: Screen Capture & Visualizer Box */}
+        <div className="flex-1 min-w-0 flex flex-col min-h-[460px] sm:min-h-[520px] lg:min-h-0">
           <CanvasVisualizer
             imageSrc={imageSrc}
             detection={detection}
           />
         </div>
 
-        {/* Right Side: Exactly 3 Cards Stacked Vertically */}
-        <div className="w-[360px] flex flex-col gap-3.5 shrink-0 min-h-0">
-          {/* Card 1 (Top Right): USB Device Connection Box */}
+        {/* Right Side: Stacked Controls & Diagnostics */}
+        <div className="w-full lg:w-[360px] flex flex-col gap-3.5 shrink-0 min-h-0">
+          {/* Card 1: USB Device Connection Box */}
           <USBConnectionCard
             isConnected={isConnected}
             deviceName={deviceName}
@@ -316,7 +316,7 @@ export function App() {
             isWebUsbSupported={AdbManager.isSupported()}
           />
 
-          {/* Card 2 (Middle Right): Auto-Solve Controls Box */}
+          {/* Card 2: Auto-Solve Controls Box */}
           <ControlPanel
             isConnected={isConnected}
             isSolving={isSolving}
@@ -326,8 +326,8 @@ export function App() {
             onToggleAutoLoop={() => setIsAutoLoop(!isAutoLoop)}
           />
 
-          {/* Card 3 (Bottom Right): Diagnostics Log Box */}
-          <div className="flex-1 min-h-0">
+          {/* Card 3: Diagnostics Log Box */}
+          <div className="h-64 lg:h-auto lg:flex-1 min-h-0">
             <TerminalLogs logs={logs} onClearLogs={() => setLogs([])} />
           </div>
         </div>
