@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #fffbf0;
+    color: #0f172a;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Neo-Brutalism Pastel Utilities */
+.brutal-card {
+  background-color: #ffffff;
+  border: 3px solid #0f172a;
+  box-shadow: 5px 5px 0px 0px #0f172a;
+  border-radius: 1rem;
+}
+
+.brutal-card-sm {
+  border: 2px solid #0f172a;
+  box-shadow: 3px 3px 0px 0px #0f172a;
+  border-radius: 0.75rem;
+}
+
+.brutal-btn {
+  border: 3px solid #0f172a;
+  box-shadow: 4px 4px 0px 0px #0f172a;
+  font-weight: 800;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #0f172a;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px #0f172a;
+}
+
+.brutal-badge {
+  border: 2px solid #0f172a;
+  box-shadow: 2px 2px 0px 0px #0f172a;
+  font-weight: 800;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fef08a;
+  border-left: 2px solid #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0f172a;
+  border-radius: 4px;
+}
